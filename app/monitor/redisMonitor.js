@@ -5,12 +5,12 @@
 var logger = require('pomelo-logger').getLogger('san-monitor', 'RedisMonitor');
 var async = require('async');
 
-var RedisMonitor = function() {
-    this.$id = "RedisMonitor";
+var RedisMonitor = function () {
+  this.$id = "redisMonitor";
 };
 
 RedisMonitor.prototype.test = function () {
-    logger.info("redis test");
+  logger.info("redis test");
 };
 
 module.exports = RedisMonitor;

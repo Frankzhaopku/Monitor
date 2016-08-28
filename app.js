@@ -3,33 +3,29 @@ var bearcat = require('bearcat');
 var argv = require('optimist').argv;
 
 var contextPath = require.resolve('./context.json');
-var MODE_ALL = 'all';
+var TYPE_ALL = 'all';
 
-var mode = argv['mode'] || MODE_ALL;
+var type = argv['type'] || TYPE_ALL;
 
 bearcat.createApp([contextPath]);
 
-var capitalize = function (str) {
-   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-};
+bearcat.start(function () {
 
-bearcat.start(function() {
+  if (type === TYPE_ALL) {
+    type = ['redis', 'game', 'udp'];
+  } else {
+    type = type.split(",");
+  }
 
-    if (mode === MODE_ALL) {
-        mode = ['Redis', 'Server', 'Udp'];
-    } else {
-        mode = mode.split(",");
-    }
+  type.map(function (t) {
+    var monitor = bearcat.getBean(t.toLowerCase() + "Monitor");
+    if (monitor) monitor.test();
+  });
 
-    mode.map(function (type) {
-        var monitor = bearcat.getBean(capitalize(type) + "Monitor");
-        if (monitor) monitor.test();
-    });
-
-    process.env.BEARCAT_DEBUG = true;
+  process.env.BEARCAT_DEBUG = true;
 });
 
 // Uncaught exception handler
-process.on('uncaughtException', function(err) {
-    logger.error('Caught exception: ' + err.stack);
+process.on('uncaughtException', function (err) {
+  logger.error('Caught exception: ' + err.stack);
 });

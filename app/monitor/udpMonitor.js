@@ -5,12 +5,12 @@
 var logger = require('pomelo-logger').getLogger('san-monitor', 'UdpMonitor');
 var async = require('async');
 
-var UdpMonitor = function() {
-    this.$id = "UdpMonitor";
+var UdpMonitor = function () {
+  this.$id = "udpMonitor";
 };
 
 UdpMonitor.prototype.test = function () {
-    logger.info("udp test");
+  logger.info("udp test");
 };
 
 module.exports = UdpMonitor;
