@@ -9,13 +9,22 @@ var mode = argv['mode'] || MODE_ALL;
 
 bearcat.createApp([contextPath]);
 
+var capitalize = function (str) {
+   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
+
 bearcat.start(function() {
 
-    if (mode === 'all') {
-        logger.info("all");
+    if (mode === MODE_ALL) {
+        mode = ['Redis', 'Server', 'Udp'];
     } else {
-        logger.info(mode);
+        mode = mode.split(",");
     }
+
+    mode.map(function (type) {
+        var monitor = bearcat.getBean(capitalize(type) + "Monitor");
+        if (monitor) monitor.test();
+    });
 
     process.env.BEARCAT_DEBUG = true;
 });
