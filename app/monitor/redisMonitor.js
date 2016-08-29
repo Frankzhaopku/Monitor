@@ -9,8 +9,4 @@ var RedisMonitor = function () {
   this.$id = "redisMonitor";
 };
 
-RedisMonitor.prototype.test = function () {
-  logger.info("redis test");
-};
-
 module.exports = RedisMonitor;

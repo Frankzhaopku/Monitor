@@ -9,8 +9,4 @@ var UdpMonitor = function () {
   this.$id = "udpMonitor";
 };
 
-UdpMonitor.prototype.test = function () {
-  logger.info("udp test");
-};
-
 module.exports = UdpMonitor;

@@ -9,25 +9,15 @@ var process = require('child_process');
 var GameMonitor = function () {
   this.$id = "gameMonitor";
   this.$init = "init";
-  this.$configService = null;
-  this.servers = null;
-};
-
-GameMonitor.prototype.test = function () {
-  var servers = this.servers;
-  servers.map(function (server) {
-    logger.info("Server: " + server['addr'] + ", port: " + server['port'] + ", user: " + server['user']);
-    var cmd = "ssh " + server['addr'] + ' -p ' + server['port'] + ' -l ' + server['user'] + ' | mpstat';
-    process.exec(cmd, function (err, stdout, stderr) {
-      if (err) return logger.error(err);
-      if (stderr) return logger.error(stderr);
-      return logger.debug(stdout);
-    });
-  });
+  this.$monitorService = null;
 };
 
 GameMonitor.prototype.init = function () {
-  this.servers = this.$configService.gameConfig.servers;
+
+};
+
+GameMonitor.prototype.test = function () {
+  setInterval(this.$monitorService.getCPUInfo, 1000);
 };
 
 module.exports = GameMonitor;
