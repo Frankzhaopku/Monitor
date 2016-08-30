@@ -19,9 +19,8 @@ bearcat.start(function () {
 
   type.map(function (t) {
     var monitor = bearcat.getBean(t.toLowerCase() + "Monitor");
-    if (monitor && monitor.test) {
-      logger.info("Run test");
-      monitor.test();
+    if (monitor && monitor.start) {
+      monitor.start();
     }
   });
 

@@ -8,17 +8,14 @@ var logger = require('pomelo-logger').getLogger('san-monitor', 'configService');
 
 var ConfigService = function () {
   this.$id = "configService";
-  this.$init = "init";
-  this.gameConfig = null;
-  this.redisConfig = null;
-  this.udpConfig = null;
+  this.loadPath = process.cwd() + '/config/' + bearcat.getApplicationContext().getEnv() + '/';
+  this.gameConfig = require(this.loadPath + 'game.json');
+  this.redisConfig = require(this.loadPath + 'redis.json');
+  this.udpConfig = require(this.loadPath + 'udp.json');
+  this.statsdConfig = require(this.loadPath + 'statsd.json');
 };
 
 ConfigService.prototype.init = function () {
-  var loadPath = process.cwd() + '/config/' + bearcat.getApplicationContext().getEnv() + '/';
-  this.gameConfig = require(loadPath + 'game.json');
-  this.redisConfig = require(loadPath + 'redis.json');
-  this.udpConfig = require(loadPath + 'udp.json');
 };
 
 module.exports = ConfigService;
