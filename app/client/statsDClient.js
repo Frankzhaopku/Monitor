@@ -22,7 +22,7 @@ StatsDClient.prototype.sendData = function (dataArr) {
   dataArr.forEach(function (data) {
     if (!(data.hasOwnProperty('method') && data.hasOwnProperty('metric') && data.hasOwnProperty('value'))) return;
     if (!(client[data.method] && typeof client[data.method] === 'function')) return;
-    logger.info("Start send data: " + JSON.stringify(data));
+    //logger.info("Start send data: " + JSON.stringify(data));
     client[data.method](data.metric, data.value);
   });
 };

@@ -23,7 +23,7 @@ GameMonitor.prototype.start = function () {
   var monitorService = self.$monitorService;
   //
   var callback = function () {
-    self.processResult.apply(self, arguments);
+    self.$utils.processResult.apply(self, arguments);
   };
   // periodically running function
   var runMonitor = function () {
@@ -32,27 +32,27 @@ GameMonitor.prototype.start = function () {
       if (!self.$utils.verifyServerInfo(serverInfo)) {
         logger.warn("Game server " + index + " info invalid.");
       } else if (serverInfo['enable']) {
-        // get cpu info
-        monitorService.getCpuInfo(serverInfo, callback);
-        // get mem info
-        monitorService.getMemInfo(serverInfo, callback);
+        if (serverInfo['cpu']['enable']) {
+          // get cpu info
+          monitorService.getCpuInfo(serverInfo, callback);
+        }
+        if (serverInfo['mem']['enable']) {
+          // get mem info
+          monitorService.getMemInfo(serverInfo, callback);
+        }
         // get disk info
-        monitorService.getDiskInfo(serverInfo, callback);
+        if (serverInfo['disk']['enable']) {
+          monitorService.getDiskInfo(serverInfo, callback);
+        }
+        // get network device info
+        if (serverInfo['net']['enable']) {
+          monitorService.getNetworkInfo(serverInfo, callback);
+        }
       }
     });
   };
 
   setInterval(runMonitor, this.$const.GAME_MONITOR_INTERVAL);
-};
-
-// process monitor result, send metric to statsd
-GameMonitor.prototype.processResult = function (err, res) {
-  if (err) {
-    return logger.error(err);
-  }
-  if (res) {
-    this.$statsDClient.sendData(res);
-  }
 };
 
 module.exports = GameMonitor;

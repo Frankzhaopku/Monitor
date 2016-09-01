@@ -7,6 +7,7 @@ var logger = require('pomelo-logger').getLogger('san-monitor', 'utils');
 
 var Utils = function () {
   this.$id = "utils";
+  this.$statsDClient = null;
 };
 
 Utils.prototype.verifyServerInfo = function (serverInfo) {
@@ -45,6 +46,27 @@ Utils.prototype.format = function (args) {
     }
     return replace;
   });
+};
+
+Utils.prototype.assginFetchInfo = function (descArr, data) {
+  var ret = {};
+  data = data.toString().replace(/^\s+|\s+$/, '');
+  if (data === "") return null;
+  var dataArr = data.split(/\s+/);
+  descArr.forEach(function (desc, index) {
+    ret[descArr[index]] = dataArr[index] || "";
+  });
+  return ret;
+};
+
+// process monitor result, send metric to statsd
+Utils.prototype.processResult = function (err, res) {
+  if (err) {
+    return logger.error(err);
+  }
+  if (res) {
+    this.$utils.$statsDClient.sendData(res);
+  }
 };
 
 module.exports = Utils;
