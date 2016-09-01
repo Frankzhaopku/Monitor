@@ -30,16 +30,25 @@ var emptyRecvData = {
   sets: {}
 };
 
+var utils = {
+  gt: function (a, b) {
+    return a > b;
+  },
+  lt: function (a, b) {
+    return a < b;
+  }
+};
+
 var alarmThreshold = {
   
   gauges: {
     "cpu.game-server-machine-1" : {
-      method: 'gt',
+      method: gt,
       change: false,
       value: 50
     },
     'mem.free.game-server-machine-1': {
-      method: 'lt',
+      method: lt,
       change: false,
       value: 20 * 1024 * 1024
     }
@@ -48,14 +57,6 @@ var alarmThreshold = {
 };
 
 var lastRecvData = null;
-
-var gt = function (a, b) {
-  return a > b;
-};
-
-var lt = function (a, b) {
-  return a < b;
-};
 
 var alarmFlush = function dataReceive (ts, metrics) {
   var recvData = extend(emptyRecvData, {});
@@ -88,7 +89,7 @@ var alarmFlush = function dataReceive (ts, metrics) {
       } else {
         value = recvData[type][metric];
       }
-      if (alarmThreshold[type][metric].method(value, alarmThreshold[type][metric].value)) {
+      if (utils[alarmThreshold[type][metric].method](value, alarmThreshold[type][metric].value)) {
         console.log('alarm!');
       }
     });
