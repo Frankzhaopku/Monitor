@@ -50,7 +50,7 @@ var alarmThreshold = {
     'mem.free.game-server-machine-1': {
       method: 'lt',
       change: false,
-      value: 20 * 1024 * 1024
+      value: 1024 * 1024
     }
   }
 
@@ -90,7 +90,8 @@ var alarmFlush = function dataReceive (ts, metrics) {
         value = recvData[type][metric];
       }
       if (utils[alarmThreshold[type][metric].method](value, alarmThreshold[type][metric].value)) {
-        console.log('alarm!');
+
+        console.log('alarm! metric: ' + metric + ',value: ' + value);
       }
     });
   });
