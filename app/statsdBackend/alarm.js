@@ -4,7 +4,7 @@
 
 var extend = require('util')._extend;
 
-var monitorItem = {
+var monitorItems = {
   gauges: [
     // game server
     'cpu.game-server-machine',
@@ -33,10 +33,15 @@ var emptyRecvData = {
 var alarmThreshold = {
   
   gauges: {
-    cpu.game-server-machine : {
+    "cpu.game-server-machine-1" : {
       method: 'gt',
       change: false,
       value: 50
+    },
+    'mem.free.game-server-machine-1': {
+      method: 'lt',
+      change: false,
+      value: 20 * 1024 * 1024
     }
   }
 
@@ -44,21 +49,28 @@ var alarmThreshold = {
 
 var lastRecvData = null;
 
+var gt = function (a, b) {
+  return a > b;
+};
+
+var lt = function (a, b) {
+  return a < b;
+};
+
 var alarmFlush = function dataReceive (ts, metrics) {
   var recvData = extend(emptyRecvData, {});
-  for (var type in monitorItem) {
-    if (monitorItem.hasOwnProperty(type)) {
-      if (!metrics.hasOwnProperty(type)) return;
-      monitorItem[type].forEach(function (item) {
-        for (var metric in metrics[type]) {
-          if (!metrics[type].hasOwnProperty(metric)) return;
-          if (metric.indexOf(item) !== -1) {
-            recvData[type][metric] = metrics[type][metric];
-          }
+
+  Object.keys(monitorItems).forEach(function (type) {
+    if (!metrics.hasOwnProperty(type)) return;
+    monitorItems[type].forEach(function (item) {
+      metrics[type].forEach(function (metric) {
+        if (metric.indexOf(item) !== -1) {
+          recvData[type][metric] = metric[type][metric];
         }
       });
-    }
-  }
+    });
+  });
+
   console.log(JSON.stringify(recvData));
   
   if (lastRecvData === null) {
@@ -66,9 +78,21 @@ var alarmFlush = function dataReceive (ts, metrics) {
     return;
   }
 
-  for (var type in alarmThreshold) {
-    
-  }
+  Object.keys(alarmThreshold).forEach(function (type) {
+    if (!recvData.hasOwnProperty(type)) return;
+    Object.keys(alarmThreshold[type]).forEach(function (metric) {
+      if (!recvData[type].hasOwnProperty(metric)) return;
+      var value;
+      if (alarmThreshold[type][metric].change) {
+        value = recvData[type][metric] - lastRecvData[type][metric];
+      } else {
+        value = recvData[type][metric];
+      }
+      if (alarmThreshold[type][metric][method](value, alarmThreshold[type][metric].value)) {
+        console.log('alarm!');
+      }
+    });
+  });
 
 };
 
