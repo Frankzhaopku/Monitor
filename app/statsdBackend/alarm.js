@@ -63,7 +63,7 @@ var alarmFlush = function dataReceive (ts, metrics) {
   Object.keys(monitorItems).forEach(function (type) {
     if (!metrics.hasOwnProperty(type)) return;
     monitorItems[type].forEach(function (item) {
-      metrics[type].forEach(function (metric) {
+      Object.keys(metrics[type]).forEach(function (metric) {
         if (metric.indexOf(item) !== -1) {
           recvData[type][metric] = metric[type][metric];
         }
