@@ -43,12 +43,12 @@ var alarmThreshold = {
   
   gauges: {
     "cpu.game-server-machine-1" : {
-      method: gt,
+      method: 'gt',
       change: false,
       value: 50
     },
     'mem.free.game-server-machine-1': {
-      method: lt,
+      method: 'lt',
       change: false,
       value: 20 * 1024 * 1024
     }
