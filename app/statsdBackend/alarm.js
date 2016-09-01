@@ -88,7 +88,7 @@ var alarmFlush = function dataReceive (ts, metrics) {
       } else {
         value = recvData[type][metric];
       }
-      if (alarmThreshold[type][metric][method](value, alarmThreshold[type][metric].value)) {
+      if (alarmThreshold[type][metric].method(value, alarmThreshold[type][metric].value)) {
         console.log('alarm!');
       }
     });
