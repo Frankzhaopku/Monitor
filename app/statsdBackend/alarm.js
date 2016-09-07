@@ -3,6 +3,7 @@
  */
 
 var extend = require('util')._extend;
+var request = require('request');
 
 var monitorItems = {
   gauges: [
@@ -42,10 +43,10 @@ var utils = {
 var alarmThreshold = {
   
   gauges: {
-    "cpu.game-server-machine-1" : {
+    'cpu.game-server-machine-1' : {
       method: 'gt',
       change: false,
-      value: 50
+      value: 70
     },
     'mem.free.game-server-machine-1': {
       method: 'lt',
@@ -57,6 +58,12 @@ var alarmThreshold = {
 };
 
 var lastRecvData = null;
+
+var newAlarmFlush = function (ts, metrics) {
+  request.post({url: "http://123.56.86.82:5555/alarm/data", form: metrics}, function (err, httpResponse, body) {
+    if (err) console.log(err);
+  });
+};
 
 var alarmFlush = function dataReceive (ts, metrics) {
   var recvData = extend(emptyRecvData, {});
@@ -99,7 +106,7 @@ var alarmFlush = function dataReceive (ts, metrics) {
 };
 
 exports.init = function (startupTime, config, events) {
-  events.on('flush', alarmFlush);
-  events.on('status', function () {console.log(JSON.stringify(status));});
+  events.on('flush', newAlarmFlush);
+  events.on('status', function () {});
   return true;
 };
